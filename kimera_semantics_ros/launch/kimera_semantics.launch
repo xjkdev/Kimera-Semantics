@@ -16,13 +16,8 @@
   <!-- Let's go at twice real-time to show the speed! It can go faster, but then rviz struggles. -->
   <arg name="rosbag_rate" default="2.0"/>
   <arg name="bag_file" default="$(find kimera_semantics_ros)/rosbags/kimera_semantics_demo.bag"/>
-  <node name="player" pkg="rosbag" type="play" output="screen"
+  <node name="player" pkg="rosbag" type="play"
     args="--clock --rate $(arg rosbag_rate) $(arg bag_file)"  if="$(arg play_bag)">
-    <!-- The rosbag we first generated did not follow ROS naming standards for image topics,
-         so we remap the topics accordingly here.-->
-    <remap from="/tesse/left_cam" to="/tesse/left_cam/image_raw"/>
-    <remap from="/tesse/segmentation" to="/tesse/segmentation/image_raw"/>
-    <remap from="/tesse/depth" to="/tesse/depth/image_raw"/>
   </node>
 
   <!-- If you just want to run 3D reconstruction without semantics, set this flag to false-->
@@ -32,10 +27,12 @@
   <arg name="semantic_pointcloud"         default="/semantic_pointcloud"/>
   <arg name="left_cam_info_topic"         default="/tesse/left_cam/camera_info"/>
   <arg name="right_cam_info_topic"        default="/tesse/right_cam/camera_info"/>
+  <arg name="seg_cam_info_topic"          default="/tesse/seg_cam/camera_info"/>
+  <arg name="depth_cam_info_topic"        default="/tesse/depth_cam/camera_info"/>
   <arg name="left_cam_topic"              default="/tesse/left_cam/image_raw"/>
   <arg name="right_cam_topic"             default="/tesse/right_cam/image_raw"/>
-  <arg name="left_cam_segmentation_topic" default="/tesse/segmentation/image_raw"/>
-  <arg name="left_cam_depth_topic"        default="/tesse/depth/image_raw"/>
+  <arg name="left_cam_segmentation_topic" default="/tesse/seg_cam/image_raw"/>
+  <arg name="left_cam_depth_topic"        default="/tesse/depth_cam/image_raw"/>
   <arg name="use_freespace_pointcloud"    default="false" />
   <arg name="freespace_pointcloud"        default="/dev/null"/>
 
@@ -65,9 +62,26 @@
       </include>
     </group>
 
+    <node pkg="tf" type="static_transform_publisher" name="left_cam_tf" args="0 0 0 0 0 0 1 left_cam_kimera left_cam  100"/>
+    <node pkg="tf" type="static_transform_publisher" name="depth_cam_tf" args="0 0 0 0 0 0 1 left_cam depth_cam  100"/>
+    <node pkg="tf" type="static_transform_publisher" name="seg_cam_tf" args="0 0 0 0 0 0 1 left_cam seg_cam  100"/>
+    <node pkg="nodelet" type="nodelet" name="depth_to_rgb"
+    args="load depth_image_proc/register nodelet_manager --no-bond" output="screen">
+      <!-- Input -->
+      <remap from="rgb/camera_info" to="$(arg seg_cam_info_topic)" if="$(arg metric_semantic_reconstruction)"/>
+      <remap from="rgb/camera_info" to="$(arg left_cam_info_topic)" unless="$(arg metric_semantic_reconstruction)"/> 
+      <remap from="depth/camera_info" to="$(arg depth_cam_info_topic)"/> 
+      <remap from="depth/image_rect" to="$(arg left_cam_depth_topic)"/>
+
+      <!-- Output:  -->
+      <remap from="depth_registered/image_rect" to="$(arg left_cam_depth_topic)/registered_info"/>
+      <remap from="depth_registered/image_rect" to="$(arg left_cam_depth_topic)/registered"/> 
+    </node>
+
     <!-- Converts registered depth image and RGB image into an RGB pointcloud.
          Using depth and semantic image, it generates semantic pointcloud. We only
         run this if we are not using stereo depth reconstruction instead. -->
+         <!-- Get the scene depth image transformed to the rgb camera frame -->
     <node pkg="nodelet" type="nodelet" name="cloudify"
       args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager
       -no-bond" output="screen">
@@ -76,7 +90,7 @@
       <remap from="rgb/image_rect_color"        to="$(arg left_cam_segmentation_topic)" if="$(arg metric_semantic_reconstruction)"/>
       <remap from="rgb/image_rect_color"        to="$(arg left_cam_topic)"              unless="$(arg metric_semantic_reconstruction)"/>
       <remap from="depth_registered/image_rect" to="$(arg left_cam_stereo_depth_topic)" if="$(arg run_stereo_dense)"/>
-      <remap from="depth_registered/image_rect" to="$(arg left_cam_depth_topic)"        unless="$(arg run_stereo_dense)"/>
+      <remap from="depth_registered/image_rect" to="$(arg left_cam_depth_topic)/registered"        unless="$(arg run_stereo_dense)"/>
       <!-- Output -->
       <remap from="depth_registered/points"     to="$(arg semantic_pointcloud)"/>
       <!-- Params -->
