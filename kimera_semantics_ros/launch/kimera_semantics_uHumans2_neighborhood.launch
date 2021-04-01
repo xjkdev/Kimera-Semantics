@@ -17,7 +17,7 @@
   <arg name="bag_file"    default="$(find kimera_semantics_ros)/rosbags/kimera_semantics_demo.bag"/>
 
   <arg name="metric_semantic_reconstruction" default="true"/>
-  <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_office1_segmentation_mapping.csv"/>
+  <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_neighborhood1_segmentation_mapping.csv"/>
 
   <!-- Input -->
   <arg name="semantic_pointcloud"         default="/semantic_pointcloud"/>

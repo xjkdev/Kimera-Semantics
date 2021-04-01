@@ -8,27 +8,27 @@
    - 1. VIO's estimated base_link: `left_cam_base_link`
    - 2. Or, if you want to use simulator's ground-truth: `left_cam`
   -->
-  <arg name="sensor_frame" default="left_cam"/>
+  <arg name="sensor_frame" default="cam0"/>
 
   <!-- If you want to play directly from a rosbag from the launch file.
        I personally prefer to run the rosbag in another terminal. -->
   <arg name="play_bag"    default="false"/>
   <arg name="rosbag_rate" default="1.0"/>
-  <arg name="bag_file"    default="$(find kimera_semantics_ros)/rosbags/kimera_semantics_demo.bag"/>
+  <arg name="bag_file"    default="/home/junkun/datasets/uHumans/uHumans2_apartment_s1_00h.bag"/>
 
   <arg name="metric_semantic_reconstruction" default="true"/>
-  <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_office1_segmentation_mapping.csv"/>
+  <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_archviz1_segmentation_mapping.csv"/>
 
   <!-- Input -->
-  <arg name="semantic_pointcloud"         default="/semantic_pointcloud"/>
-  <arg name="left_cam_info_topic"         default="/tesse/left_cam/camera_info"/>
-  <arg name="right_cam_info_topic"        default="/tesse/right_cam/camera_info"/>
-  <arg name="left_cam_topic"              default="/tesse/left_cam/rgb/image_raw"/>
-  <arg name="right_cam_topic"             default="/tesse/right_cam/rgb/image_raw"/>
+  <arg name="semantic_pointcloud"         default="/stereo_gray/dense_stereo/pointcloud"/>
+  <arg name="left_cam_info_topic"         default="/cam0/camera_info"/>
+  <arg name="right_cam_info_topic"        default="/cam1/camera_info"/>
+  <arg name="left_cam_topic"              default="/cam0/image_raw"/>
+  <arg name="right_cam_topic"             default="/cam1/image_raw"/>
   <arg name="left_cam_segmentation_topic" default="/tesse/seg_cam/rgb/image_raw"/>
-  <arg name="left_cam_depth_topic"        default="/tesse/depth_cam/mono/image_raw"/>
-  <arg name="use_freespace_pointcloud"    default="false" />
-  <arg name="freespace_pointcloud"        default="/dev/null"/>
+  <arg name="left_cam_depth_topic"        default="/dev/null"/>
+  <arg name="use_freespace_pointcloud"    default="true" />
+  <arg name="freespace_pointcloud"        default="/stereo_gray/dense_stereo/freespace_pointcloud"/>
 
   <!-- Generate input pointcloud with semantic labels for kimera-semantics:
      - 1. Using the depth image and registered semantic image (run_stereo_dense=false).
@@ -36,10 +36,11 @@
   <arg name="run_stereo_dense"     default="false"/>
   <arg name="publish_point_clouds" default="true"/>
 
+<!--
   <arg name="pkg_type"    default="kimera_semantics_ros"  if="$(arg metric_semantic_reconstruction)"/>
   <arg name="server_type" default="kimera_semantics_node" if="$(arg metric_semantic_reconstruction)"/>
   <arg name="pkg_type"    default="voxblox_ros" unless="$(arg metric_semantic_reconstruction)"/>
   <arg name="server_type" default="tsdf_server" unless="$(arg metric_semantic_reconstruction)"/>
-
+-->
   <include file="$(find kimera_semantics_ros)/launch/kimera_semantics.launch" pass_all_args="true"/>
 </launch>

@@ -15,8 +15,10 @@
   <arg name="play_bag" default="false"/>
   <!-- Let's go at twice real-time to show the speed! It can go faster, but then rviz struggles. -->
   <arg name="rosbag_rate" default="2.0"/>
+  <!--
   <arg name="bag_file" default="$(find kimera_semantics_ros)/rosbags/kimera_semantics_demo.bag"/>
-
+  -->
+  <arg name="bag_file" default="/home/junkun/datasets/uHumans/uHumans2_apartment_s1_00h.bag"/>
   <!-- If you just want to run 3D reconstruction without semantics, set this flag to false-->
   <arg name="metric_semantic_reconstruction" default="true"/>
   <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_office1_segmentation_mapping.csv"/>
