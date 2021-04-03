@@ -54,7 +54,7 @@
     <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager"
       output="screen"/>
     <!-- Run stereo_dense_reconstruction_node (only if we don't use the depth image). -->
-    <arg name="left_cam_stereo_depth_topic" value="/depth_image"/>
+    <arg name="left_cam_stereo_depth_topic" value="/disparity_to_depth/depth_image"/>
     <group if="$(arg run_stereo_dense)">
       <arg name="pointcloud" value="/points2"/>
       <include file="$(find kimera_semantics_ros)/launch/stereo_depth.launch">
