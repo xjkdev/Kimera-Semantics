@@ -20,13 +20,13 @@
   <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_archviz1_segmentation_mapping.csv"/>
 
   <!-- Input -->
-  <arg name="semantic_pointcloud"         default="/stereo_gray/dense_stereo/pointcloud"/>
+  <arg name="semantic_pointcloud"         default="/semantic_pointcloud"/>
   <arg name="left_cam_info_topic"         default="/cam0/camera_info"/>
   <arg name="right_cam_info_topic"        default="/cam1/camera_info"/>
   <arg name="left_cam_topic"              default="/cam0/image_raw"/>
   <arg name="right_cam_topic"             default="/cam1/image_raw"/>
   <arg name="left_cam_segmentation_topic" default="/tesse/seg_cam/rgb/image_raw"/>
-  <arg name="left_cam_depth_topic"        default="/dev/null"/>
+  <arg name="left_cam_depth_topic"        default="/elas/depth"/>
   <arg name="use_freespace_pointcloud"    default="true" />
   <arg name="freespace_pointcloud"        default="/stereo_gray/dense_stereo/freespace_pointcloud"/>
 

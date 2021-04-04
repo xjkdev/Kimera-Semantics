@@ -20,14 +20,14 @@
   <arg name="semantic_label_2_color_csv_filepath" default="$(find kimera_semantics_ros)/cfg/tesse_multiscene_archviz1_segmentation_mapping.csv"/>
 
   <!-- Input -->
-  <arg name="semantic_pointcloud"         default="/stereo_gray/dense_stereo/pointcloud"/>
-  <arg name="left_cam_info_topic"         default="/cam0/camera_info"/>
-  <arg name="right_cam_info_topic"        default="/cam1/camera_info"/>
+  <arg name="semantic_pointcloud"         default="/semantic_pointcloud"/>
+  <arg name="left_cam_info_topic"         default="/cam01/camera_info"/>
+  <arg name="right_cam_info_topic"        default="/cam11/camera_info"/>
   <arg name="left_cam_topic"              default="/cam0/image_raw"/>
   <arg name="right_cam_topic"             default="/cam1/image_raw"/>
   <arg name="left_cam_segmentation_topic" default="/tesse/seg_cam/rgb/image_raw"/>
   <arg name="left_cam_depth_topic"        default="/dev/null"/>
-  <arg name="use_freespace_pointcloud"    default="true" />
+  <arg name="use_freespace_pointcloud"    default="false" />
   <arg name="freespace_pointcloud"        default="/stereo_gray/dense_stereo/freespace_pointcloud"/>
 
   <!-- Generate input pointcloud with semantic labels for kimera-semantics:
@@ -59,8 +59,8 @@
     <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager"
       output="screen"/>
     <!-- Run stereo_dense_reconstruction_node (only if we don't use the depth image). -->
-    <arg name="disparity_image"             value="/stereo_gray/dense_stereo/disparity/image"/>
-    <arg name="left_cam_stereo_depth_topic" value="/disparity_to_depth/depth_image"/>
+    <arg name="disparity_image"             value="/disparity"/>
+    <arg name="left_cam_stereo_depth_topic" value="/elas/depth"/>
 
     <node name="disparity_to_depth" pkg="nodelet" type="nodelet"
       args="load disparity_image_proc/depth_image nodelet_manager" output="screen">
@@ -84,10 +84,8 @@
       -no-bond" output="screen">
       <!-- Input -->
       <remap from="rgb/camera_info"             to="$(arg left_cam_info_topic)"/>
-      <remap from="rgb/image_rect_color"        to="$(arg left_cam_segmentation_topic)" if="$(arg metric_semantic_reconstruction)"/>
-      <remap from="rgb/image_rect_color"        to="$(arg left_cam_topic)"              unless="$(arg metric_semantic_reconstruction)"/>
-      <remap from="depth_registered/image_rect" to="$(arg left_cam_stereo_depth_topic)" if="$(arg run_stereo_dense)"/>
-      <remap from="depth_registered/image_rect" to="$(arg left_cam_depth_topic)"        unless="$(arg run_stereo_dense)"/>
+      <remap from="rgb/image_rect_color"        to="$(arg left_cam_segmentation_topic)"/>
+      <remap from="depth_registered/image_rect" to="$(arg left_cam_stereo_depth_topic)"/>
       <!-- Output -->
       <remap from="depth_registered/points"     to="$(arg semantic_pointcloud)"/>
       <!-- Params -->

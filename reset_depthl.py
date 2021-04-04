@@ -28,8 +28,7 @@ def callbackr(msg):
     pubr.publish(msg)
 
 
-
-rospy.init_node('listener', anonymous=True)
+rospy.init_node('reset_depthl', anonymous=True)
 # rospy.Subscriber('/elas/depth', Image, callback)
 # rospy.Subscriber('/tesse/depth_cam/mono/image_raw', Image, callback)
 rospy.Subscriber('/tesse/left_cam/camera_info', CameraInfo, callbackl)
